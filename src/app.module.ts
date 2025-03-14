@@ -5,6 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ClientsModule } from './clients/clients.module';
 import * as Joi from 'joi';
+import { ProtectedController } from './common/controllers/protected.controller';
 
 @Module({
   imports: [
@@ -27,7 +28,7 @@ import * as Joi from 'joi';
     }),
     ClientsModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, ProtectedController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

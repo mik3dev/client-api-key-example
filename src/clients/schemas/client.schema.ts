@@ -31,7 +31,7 @@ export class Client {
     description: 'Name of the person responsible for the client application',
     example: 'John Doe',
   })
-  @Prop({ required: true })
+  @Prop({})
   responsibleName: string;
 
   @ApiProperty({
@@ -39,7 +39,7 @@ export class Client {
       'Contact information of the responsible person (email or phone)',
     example: 'john.doe@example.com',
   })
-  @Prop({ required: true })
+  @Prop({})
   responsibleContact: string;
 
   @ApiProperty({

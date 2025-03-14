@@ -10,6 +10,7 @@ This project provides a robust API for managing client applications and their as
 
 - **Client Management**: Create, read, update, and delete client records
 - **API Key Generation**: Automatic generation of unique API keys for clients
+- **API Key Authentication**: Secure routes with API key validation
 - **API Documentation**: Swagger UI for easy API exploration and testing
 - **MongoDB Integration**: Persistent storage of client data
 - **Validation**: Input validation for all API endpoints
@@ -85,6 +86,7 @@ http://localhost:3000/docs/v1
 | PATCH  | /api/v1/clients/:id                    | Update a client                 |
 | DELETE | /api/v1/clients/:id                    | Delete a client                 |
 | POST   | /api/v1/clients/:id/regenerate-api-key | Regenerate API key for a client |
+| GET    | /api/v1/protected                      | Example protected route         |
 
 ## Client Schema
 
@@ -96,6 +98,47 @@ Each client has the following properties:
 - **responsibleName**: The name of the person responsible for the client
 - **responsibleEmail**: The email of the person responsible for the client
 - **url**: The URL of the client application
+
+## API Key Authentication
+
+The application includes an API key authentication system that can be used to protect routes. API keys can be provided in three ways:
+
+1. **Bearer Token**: Include the API key in the Authorization header as a Bearer token
+   ```
+   Authorization: Bearer your-api-key
+   ```
+
+2. **Custom Header**: Include the API key in the X-API-Key header
+   ```
+   X-API-Key: your-api-key
+   ```
+
+3. **Query Parameter**: Include the API key as a query parameter
+   ```
+   /api/v1/protected?apiKey=your-api-key
+   ```
+
+### Using API Key Authentication in Controllers
+
+To protect a route with API key authentication, use the `@ApiKeyAuth()` decorator:
+
+```typescript
+import { Controller, Get } from '@nestjs/common';
+import { ApiKeyAuth } from '../common/decorators/api-key-auth.decorator';
+import { GetClient } from '../common/decorators/get-client.decorator';
+import { Client } from '../clients/schemas/client.schema';
+
+@Controller('example')
+export class ExampleController {
+  @Get()
+  @ApiKeyAuth()
+  getProtectedResource(@GetClient() client: Client) {
+    return `Hello ${client.name}!`;
+  }
+}
+```
+
+The `@GetClient()` decorator provides access to the authenticated client in your controller methods.
 
 ## License
 
