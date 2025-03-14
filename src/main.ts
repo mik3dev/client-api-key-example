@@ -10,6 +10,8 @@ async function bootstrap() {
   const configService = app.get<ConfigService>(ConfigService);
   const port = configService.get<number>('PORT');
   const apiPrefix = configService.get<string>('API_PREFIX');
+  const swaggerEnabled = configService.get<boolean>('SWAGGER_ENABLED');
+  const swaggerPrefix = configService.get<string>('SWAGGER_PREFIX');
 
   // Enable CORS
   app.enableCors();
@@ -23,25 +25,30 @@ async function bootstrap() {
     }),
   );
 
-  // Setup Swagger
-  const config = new DocumentBuilder()
-    .setTitle('Client API Key Management')
-    .setDescription('API for managing client applications and their API keys')
-    .setVersion('1.0')
-    .addTag('clients')
-    .addBearerAuth()
-    .build();
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('docs', app, document);
+  // Setup Swagger only if enabled
+  if (swaggerEnabled) {
+    const config = new DocumentBuilder()
+      .setTitle('Client API Key Management')
+      .setDescription('API for managing client applications and their API keys')
+      .setVersion('1.0')
+      .addTag('clients')
+      .addBearerAuth()
+      .build();
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup(swaggerPrefix, app, document);
+  } else {
+    logger.log('Swagger documentation is disabled');
+  }
 
   // Global prefix for API endpoints
   app.setGlobalPrefix(apiPrefix);
 
   await app.listen(port, async () => {
     logger.log(`Application is running on: ${await app.getUrl()}`);
-    logger.log(
-      `Swagger documentation available at: ${await app.getUrl()}/docs`,
-    );
+    if (swaggerEnabled)
+      logger.log(
+        `Swagger documentation will be available at: ${await app.getUrl()}/${swaggerPrefix}`,
+      );
   });
 }
 

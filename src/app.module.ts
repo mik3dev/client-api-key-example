@@ -14,6 +14,8 @@ import * as Joi from 'joi';
         MONGODB_URI: Joi.string().required(),
         PORT: Joi.number().default(3000),
         API_PREFIX: Joi.string().default('api'),
+        SWAGGER_PREFIX: Joi.string().default('docs'),
+        SWAGGER_ENABLED: Joi.boolean().default(false),
       }),
     }),
     MongooseModule.forRootAsync({
